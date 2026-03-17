@@ -1,7 +1,9 @@
 from fastapi import APIRouter
 
+from app_api.services import bonus
+
 router = APIRouter(
-    prefix="/api/analytics",
+    prefix="/api/bonus",
     tags=["Bonus"]
 )
 
@@ -9,7 +11,7 @@ router = APIRouter(
 # 6
 @router.get("/escape-patterns")
 def get_escape_patterns():
-    pass
+    return bonus.escape_patterns()
 
 
 # 7

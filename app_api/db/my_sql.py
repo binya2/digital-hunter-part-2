@@ -30,6 +30,8 @@ class MySQL:
                 conn.commit()
                 result = cursor.rowcount
             return result
+        except Exception as e:
+            print(e)
         finally:
             cursor.close()
 
