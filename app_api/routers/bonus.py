@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from app_api.services import bonus
 
@@ -11,8 +11,10 @@ router = APIRouter(
 # 6
 @router.get("/escape-patterns")
 def get_escape_patterns():
-    return bonus.escape_patterns()
-
+    result = bonus.escape_patterns()
+    if not result:
+        raise HTTPException(status_code=404, detail="No escape patterns detected after attacks")
+    return result
 
 # 7
 @router.get("/meeting-events")
