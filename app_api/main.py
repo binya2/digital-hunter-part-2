@@ -1,6 +1,14 @@
 import os
 
 import uvicorn
+from fastapi import FastAPI
+from routers import targets, analytics, visualization
+
+app = FastAPI(title="Digital Hunter API")
+
+app.include_router(targets.router)
+app.include_router(analytics.router)
+app.include_router(visualization.router)
 
 
 if __name__ == "__main__":

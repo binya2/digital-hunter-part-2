@@ -1,4 +1,6 @@
 mysql-connector-python==9.1.0
+pandas
+geopandas
+matplotlib
 fastapi
 uvicorn
-python-multipart
