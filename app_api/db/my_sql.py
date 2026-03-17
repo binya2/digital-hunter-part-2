@@ -2,6 +2,7 @@ import os
 
 import mysql.connector
 
+
 class MySQL:
     def __init__(self):
         self._client = None
@@ -10,11 +11,11 @@ class MySQL:
     def client(self):
         if self._client is None or not self._client.is_connected():
             self._client = mysql.connector.connect(
-                host=os.environ.get('MYSQL_HOST'),
-                port=os.environ.get('MYSQL_PORT'),
-                user=os.environ.get('MYSQL_USER'),
-                password=os.environ.get('MYSQL_PASSWORD'),
-                database=os.environ.get('MYSQL_DATABASE')
+                host=os.environ.get('MYSQL_HOST', 'localhost'),
+                port=os.environ.get('MYSQL_PORT', 3306),
+                user=os.environ.get('MYSQL_USER', 'root'),
+                password=os.environ.get('MYSQL_PASSWORD', 'root'),
+                database=os.environ.get('MYSQL_DATABASE', 'digital_hunter')
             )
         return self._client
 
