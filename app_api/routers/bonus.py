@@ -19,4 +19,7 @@ def get_escape_patterns():
 # 7
 @router.get("/meeting-events")
 def get_meeting_events():
-    pass
+    result = bonus.meeting_events()
+    if not result:
+        raise HTTPException(status_code=404, detail="No escape patterns detected after attacks")
+    return result

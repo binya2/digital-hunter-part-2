@@ -33,12 +33,49 @@ def escape_patterns():
                                     FROM signals_around_attack
                                     GROUP BY attack_id, entity_id)
             SELECT entity_id,
-                   ROUND(avg_speed_before, 2)                                                           AS avg_speed_before,
-                   ROUND(avg_speed_after, 2)                                                            AS avg_speed_after,
+                   ROUND(avg_speed_before, 2) AS avg_speed_before,
+                   ROUND(avg_speed_after, 2)  AS avg_speed_after,
                    ROUND(((avg_speed_after - avg_speed_before) / NULLIF(avg_speed_before, 0)) * 100,
-                         2)                                                                             AS percentage_change
+                         2)                   AS percentage_change
             FROM final_analysis
             WHERE avg_speed_after >= avg_speed_before * 1.5;
+            """
+    result = mysql_service.execute_query(query=query, params=None, fetch=True)
+    return result
+
+
+def meeting_events():
+    query = """
+            WITH high_value_targets AS (SELECT s.entity_id,
+                                               s.timestamp,
+                                               s.reported_lat,
+                                               s.reported_lon
+                                        FROM intel_signals s
+                                                 JOIN targets t ON s.entity_id = t.entity_id
+                                        WHERE t.priority_level = 1),
+                 unknown_entities AS (SELECT s.entity_id,
+                                             s.timestamp,
+                                             s.reported_lat,
+                                             s.reported_lon
+                                      FROM intel_signals s
+                                               LEFT JOIN targets t ON s.entity_id = t.entity_id
+                                      WHERE t.entity_id IS NULL)
+            
+            SELECT h.entity_id AS entity_id_priority,
+                   u.entity_id AS entity_id_asset,
+                   h.timestamp AS meeting_time,
+                   ROUND(ST_Distance_Sphere(
+                                 POINT(h.reported_lon, h.reported_lat),
+                                 POINT(u.reported_lon, u.reported_lat)
+                         ), 2) AS distance_meters
+            FROM high_value_targets h
+                     JOIN unknown_entities u
+                          ON ABS(TIMESTAMPDIFF(SECOND, h.timestamp, u.timestamp)) <= 600
+            WHERE ST_Distance_Sphere(
+                          POINT(h.reported_lon, h.reported_lat),
+                          POINT(u.reported_lon, u.reported_lat)
+                  ) <= 1000
+            ORDER BY meeting_time DESC;
             """
     result = mysql_service.execute_query(query=query, params=None, fetch=True)
     return result
