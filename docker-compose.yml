@@ -1,7 +1,10 @@
+version: '3.8'
+
 services:
   mysql:
     image: mysql:8.0
     container_name: mysql
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: digital_hunter
@@ -10,6 +13,24 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./mysql/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+
+  app_api:
+    build:
+      context: .
+      dockerfile: app_api/Dockerfile
+    container_name: digital_hunter_api
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=digital_hunter
+      - API_PORT=8000
+      - API_HOST=0.0.0.0
+    depends_on:
+      - mysql
 
 volumes:
   mysql_data:

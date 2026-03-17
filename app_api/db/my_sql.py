@@ -12,7 +12,7 @@ class MySQL:
         if self._client is None or not self._client.is_connected():
             self._client = mysql.connector.connect(
                 host=os.environ.get('MYSQL_HOST', 'localhost'),
-                port=os.environ.get('MYSQL_PORT', 3306),
+                port=int(os.environ.get('MYSQL_PORT', 3306)),
                 user=os.environ.get('MYSQL_USER', 'root'),
                 password=os.environ.get('MYSQL_PASSWORD', 'root'),
                 database=os.environ.get('MYSQL_DATABASE', 'digital_hunter')
