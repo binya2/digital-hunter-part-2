@@ -5,7 +5,7 @@
 ### 1. Start MySQL with pre-loaded data
 
 ```bash
-docker compose -f docker-compose.db.yml up -d
+docker compose -f docker-compose.old_db.yml up -d
 ```
 
 ### 2. Connection details to the DB
